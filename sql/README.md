@@ -63,3 +63,9 @@
 
 ## null 대체
 - IFNULL(컬럼, '대체할값')
+
+<br/>
+
+# UNION
+- union : 중복 제거해서 합치기
+- union all : 중복을 허용하여 합치기
