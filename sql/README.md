@@ -69,3 +69,10 @@
 # UNION
 - union : 중복 제거해서 합치기
 - union all : 중복을 허용하여 합치기
+
+# COUNT
+- NULL을 포함하지 않는 행의 개수   
+  `SELECT COUNT(COLUMN_NAME) FROM TABLE_NAME`  
+  컬럼 이름을 사용하면 그 컬럼의 NULL인 값을 제외한 개수가 반환됨
+- 중복 값을 제외한 행의 개수
+  `SELECT COUNT(DISTINCT COLUMN_NAME) FROM TABLE_NAME`
