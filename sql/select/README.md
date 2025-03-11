@@ -25,15 +25,20 @@
           일자(한자리는 한자리) : %e  
 - like 검색 가능함
 
-<br/>
+<br/><br/>
 
 # MySQL 문자열 함수
 - 검색 LIKE
     - 서울시로 시작하는 데이터 검색 : like '서울시%'
     - 서울시로 끝나는 데이터 검색 : like '%서울시'
     - 서울시가 들어가는 데이터 검색 : like '%서울시%'
+- 포맷팅
+    - CONCAT  
+      `SELECT CONCAT('ABC', 'DEF'); -- 'ABCEDF'를 반환`
 
-<br/>
+
+
+<br/><br/>
 
 # MySQL 실수
 ## 타입
@@ -64,11 +69,13 @@
 ## null 대체
 - IFNULL(컬럼, '대체할값')
 
-<br/>
+<br/><br/>
 
 # UNION
 - union : 중복 제거해서 합치기
 - union all : 중복을 허용하여 합치기
+
+<br/><br/>
 
 # COUNT
 - NULL을 포함하지 않는 행의 개수   
