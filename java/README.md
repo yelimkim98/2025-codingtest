@@ -54,3 +54,9 @@ System.out.println(maxHeap.poll()); // 출력: 8 (가장 큰 값)
 
 # Stream
 `import java.util.stream.*`
+
+<br/><br/>
+
+# String
+- startsWith  
+  `boolean result = "Hello World".startsWith("Hello W");`
