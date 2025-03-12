@@ -14,7 +14,6 @@ System.out.println(stack.pop()); // Stack의 pop() (출력: 2)
 ## 큐
 - 삽입 : offer
 - 꺼내기 : poll
-### 큐
 ```java
 Queue<Integer> queue = new ArrayDeque<>();
 queue.offer(1);  // Queue의 enqueue (add()보다 offer() 권장)
@@ -22,7 +21,9 @@ queue.offer(2);
 System.out.println(queue.poll()); // Queue의 dequeue (출력: 1)
 ```
 
-### 우선순위 큐
+## 우선순위 큐 (힙)
+- 삽입 : offer
+- 꺼내기 : poll
 ```java
 PriorityQueue<Integer> minHeap = new PriorityQueue<>(); // 기본: 최소 힙
 minHeap.offer(5);
