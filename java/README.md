@@ -37,3 +37,7 @@ maxHeap.offer(2);
 maxHeap.offer(8);
 System.out.println(maxHeap.poll()); // 출력: 8 (가장 큰 값)
 ```
+
+## Set
+- 존재여부 : contains
+- 삽입 : add
