@@ -1,5 +1,7 @@
-# 자료구조
+# 자료구조 in java.util
 `import java.util.*`
+
+<br/>
 
 ## 스택
 - 삽입 : push
@@ -11,6 +13,8 @@ stack.push(2);
 System.out.println(stack.pop()); // Stack의 pop() (출력: 2)
 ```
 
+<br/>
+
 ## 큐
 - 삽입 : offer
 - 꺼내기 : poll
@@ -20,6 +24,8 @@ queue.offer(1);  // Queue의 enqueue (add()보다 offer() 권장)
 queue.offer(2);
 System.out.println(queue.poll()); // Queue의 dequeue (출력: 1)
 ```
+
+<br/>
 
 ## 우선순위 큐 (힙)
 - 삽입 : offer
@@ -38,6 +44,13 @@ maxHeap.offer(8);
 System.out.println(maxHeap.poll()); // 출력: 8 (가장 큰 값)
 ```
 
+<br/>
+
 ## Set
 - 존재여부 : contains
 - 삽입 : add
+
+<br/><br/>
+
+# Stream
+`import java.util.stream.*`
