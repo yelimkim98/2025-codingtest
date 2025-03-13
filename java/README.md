@@ -6,6 +6,7 @@
 ## 스택
 - 삽입 : push
 - 꺼내기 : pop
+- 꺼내지 않고 조회 : peek
 ```java
 Deque<Integer> stack = new ArrayDeque<>();
 stack.push(1);   // Stack의 push()
