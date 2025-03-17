@@ -61,5 +61,9 @@ System.out.println(maxHeap.poll()); // 출력: 8 (가장 큰 값)
 <br/><br/>
 
 # String
+## 함수
 - startsWith  
   `boolean result = "Hello World".startsWith("Hello W");`
+
+## StringBuilder
+- append
