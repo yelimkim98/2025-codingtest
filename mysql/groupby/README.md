@@ -11,3 +11,12 @@ SELECT
     ...
 FROM ...
 ```
+
+<br/>
+
+# WINDOW FUNCTION
+```sql
+SELECT WINDOW_FUNCTION (ARGUMENTS) OVER 
+( [PARTITION BY 컬럼] [ORDER BY 컬럼] [WINDOWING 절] )
+FROM 테이블명 ; 
+```
