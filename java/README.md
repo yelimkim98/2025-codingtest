@@ -67,3 +67,13 @@ System.out.println(maxHeap.poll()); // 출력: 8 (가장 큰 값)
 
 ## StringBuilder
 - append
+
+<br/><br/>
+
+# hashCode
+```java
+@Override
+public int hashCode() {
+    return Objects.hash(a, b);
+}
+```
