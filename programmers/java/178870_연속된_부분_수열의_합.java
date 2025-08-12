@@ -1,41 +1,52 @@
 class Solution {
     public int[] solution(int[] sequence, int k) {
-        int[] answer = new int[2];
-        answer[0] = 0;
-        answer[1] = 0;
-        if (sequence[0] == k) return answer;
+        boolean found=false;
+        int resultStart=0;
+        int resultEnd=0;
         
-        long sum = sequence[0];
+        int start=0;
+        int end=0;
+        int val = sequence[start];
         
-        int startIdx = 0;
-        int endIdx = 0;
-        
-        while (true) {
-            // System.out.printf("startIdx %d endIdx %d sum %d\n", startIdx, endIdx, sum);
-            
-            if (sum > k) {
-                if (startIdx == endIdx) break;
-                sum -= sequence[startIdx];
-                startIdx++;
-                continue;
+        while (start<=end && end<sequence.length) {
+            if (val < k) {
+                end++;
+                if (end >= sequence.length) {
+                    break;
+                }
+                val += sequence[end];
+                
+            } else if (val > k) {
+                // start~end+i (i=1,2,3,..)는 무조건 k보다 큼
+                // -> start 시작 케이스 탐색 완료
+                // start+1 ~ end-1까지는 무조건 k보다 작음 (start~end-1이 k보다 작았으니까)
+                // -> start+1 ~ end 부터 탐색 시작
+                val -= sequence[start];
+                start++;
+                
+            } else { // val == k
+                if (!found) {
+                    resultStart=start;
+                    resultEnd=end;
+                    found=true;
+                } else {
+                    // 비교해서 resultStart, resultEnd update
+                    if (end-start < resultEnd-resultStart) {
+                        resultStart=start;
+                        resultEnd=end;
+                    }
+                }
+                val -= sequence[start];
+                start++;
+                
+                end++;
+                if (end >= sequence.length) {
+                    break;
+                }
+                val += sequence[end];
             }
-            if (sum < k) {
-                if (endIdx == sequence.length-1) break;
-                endIdx++;
-                sum += sequence[endIdx];
-                continue;
-            }
-            // sum == k
-            if ((answer[0]==0 && answer[1]==0)
-               || (endIdx-startIdx < answer[1]-answer[0])
-               || (endIdx-startIdx == answer[1]-answer[0] && startIdx < answer[0])) {
-                answer[0] = startIdx;
-                answer[1] = endIdx;
-            }
-            if (endIdx == sequence.length-1) break;
-            sum -= sequence[startIdx];
-            startIdx++;
         }
+        int[] answer = {resultStart, resultEnd};
         return answer;
     }
 }
