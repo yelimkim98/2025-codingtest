@@ -1,159 +1,99 @@
 import java.util.*;
-
 class Node {
     int id;
-    Map<Integer, Edge> edges = new HashMap<>();
-
+    // key : nodeId, value : 가중치
+    Map<Integer, Integer> adjs = new HashMap<>();
     public Node(int id) {
         this.id=id;
     }
-    public boolean isEdgeExist(int targetNodeId) {
-        return edges.containsKey(targetNodeId);
+    public void addAdj(int nodeId, int weight) {
+        int beforeWeight = adjs.getOrDefault(nodeId, Integer.MAX_VALUE);
+        adjs.put(nodeId, Math.min(beforeWeight, weight));
     }
-    public void addEdge(int otherNodeId, Edge e) {
-        edges.put(otherNodeId, e);
-    }
-    public Edge getEdge(int nodeId) {
-        if (!isEdgeExist(nodeId)) {
-            throw new IllegalStateException("ERROR");
-        }
-        return edges.get(nodeId);
-    }
-    public Collection<Edge> getEdges() {
-        return edges.values();
-    }
-}
-
-class Edge {
-    // n1.id < n2.id
-    Node n1;
-    Node n2;
-    int weight;
-    public Edge(Node n1, Node n2, int weight) {
-        if (n1.id < n2.id) {
-            this.n1=n1;
-            this.n2=n2;
-        } else {
-            this.n1=n2;
-            this.n2=n1;
-        }
-        this.weight=weight;
-    }
-    public Node getOtherNode(int nodeId) {
-        if (nodeId == n1.id) return n2;
-        if (nodeId == n2.id) return n1;
-        else throw new IllegalStateException("ERROR");
-    }
-    
     @Override
     public String toString() {
-        return String.format("%d-%d %d", n1.id, n2.id, weight);
+        StringBuilder sb = new StringBuilder();
+        sb.append(id + " adjs [ ");
+        for (Map.Entry<Integer, Integer> entry : adjs.entrySet()) {
+            int nodeId = entry.getKey();
+            int weight = entry.getValue();
+            sb.append(nodeId + "(" + weight + ") ");
+        }
+        sb.append("]");
+        return sb.toString();
     }
 }
-
 class Graph {
     Node[] nodes;
-    public Graph(int n, int[][] roads) {
-        nodes = new Node[n];
-         for (int i=0; i<n; i++) {
-            nodes[i] = new Node(i);
+    public Graph(int n, int[][] edges) {
+        this.nodes=new Node[n];
+        for (int id=0; id<n; id++) {
+            nodes[id] = new Node(id);
         }
-        for (int[] road : roads) {
-            Node n1 = nodes[road[0]-1];
-            Node n2 = nodes[road[1]-1];
-            if (n1.isEdgeExist(n2.id)) {
-                Edge e = n1.getEdge(n2.id);
-                if (road[2] < e.weight) {
-                    e.weight=road[2];
-                }
-                
-            } else {
-                Edge e = new Edge(n1, n2, road[2]);
-                n1.addEdge(n2.id, e);
-                n2.addEdge(n1.id, e);
-            }
+        for (int[] edge : edges) {
+            Node n1 = nodes[edge[0]-1];
+            Node n2 = nodes[edge[1]-1];
+            n1.addAdj(n2.id, edge[2]);
+            n2.addAdj(n1.id, edge[2]);
         }
     }
-    public Collection<Edge> getEdges(int nodeId) {
-        return nodes[nodeId].getEdges();
+    public Map<Integer, Integer> getAdjs(int nodeId) {
+        return this.nodes[nodeId].adjs;
+    }
+    @Override
+    public String toString() {
+        StringBuilder sb=new StringBuilder();
+        for (int i=0; i<nodes.length; i++) {
+            sb.append(nodes[i] + "\n");
+        }
+        return sb.toString();
     }
 }
-
 class Solution {
-    
-    Graph graph;
-    int[] distances;
-    boolean[] finished;
-    int finishedCnt;
-    int lastFinishedIdx;
-    
-    public int solution(int N, int[][] roads, int K) {
-        this.graph = new Graph(N, roads);
-        
-        // 다익스트라
-        // 초기화 : 출발지만 거리0, 나머지는 무한
-        distances = new int[N];
-        finished = new boolean[N];
-        
-        distances[0] = 0;
-        finished[0] = true;
-        finishedCnt = 1;
-        lastFinishedIdx = 0;
-        
-        for (int i=1; i<N; i++) {
+    public int solution(int n, int[][] roads, int k) {
+        Graph graph = new Graph(n, roads);
+        // System.out.println(graph);
+        int[] distances = new int[n];
+        for (int i=1; i<n; i++) {
             distances[i] = Integer.MAX_VALUE;
         }
-        /*
-        다익스트라 :
-        각 턴마다
-        거리가 확정된 노드 중에서 거쳐가거나 아무데도 안거쳐가는 경우에 대해 
-        가장 가까운 마을 확정
-        모두 확정되면 종료
+        boolean[] finished = new boolean[n];
+        finished[0] = true;
+        int lastFinishedNodeId=0;
+        int finishedCnt=0;
         
-        구현 :
-        [직전에 새로 확정된 노드]를 거쳐오는게
-        그렇지 않은 경우보다 빠른가?를 확인하여 업데이트
-        
-        확정 안된 노드들 중 최소거리인 노드를 확정
-        */
-        while (finishedCnt < N) {
-            // lastFinishedIdx를 거치는 거리와, 그 전까지의 거리 중 더 작은 경우로 업데이트
-            // 다음에 확정할 노드 결정
-            
-            // lastFinishedIdx와 연결이 안된 노드 i는
-            // lastFinistedIdx~i 거리가 무한이므로 비교 불필요
-            for (Edge e : graph.getEdges(lastFinishedIdx)) {
-                // System.out.println(e);
-                Node targetNode = e.getOtherNode(lastFinishedIdx);
-                int newD = add(distances[lastFinishedIdx], e.weight);
-                distances[targetNode.id] = Math.min(distances[targetNode.id], newD);
+        while (finishedCnt<n) {
+            Map<Integer, Integer> adjs = graph.getAdjs(lastFinishedNodeId);
+            for (Map.Entry<Integer, Integer> entry : adjs.entrySet()) {
+                int adjNodeId = entry.getKey();
+                int weight = entry.getValue();
+                int newDistance = add(distances[lastFinishedNodeId], weight);
+                distances[adjNodeId] = Math.min(distances[adjNodeId], newDistance);
             }
-            
-            int minDistance = Integer.MAX_VALUE;
-            int minDistanceIdx = -1;
-            
-            for (int i=0; i<N; i++) {
-                if (!finished[i] && distances[i] < minDistance) {
-                    minDistance = distances[i];
-                    minDistanceIdx = i;
+            int minDistanceNodeId=0;
+            int minDistance=Integer.MAX_VALUE;
+            for (int nodeId=1; nodeId<n; nodeId++) {
+                if (!finished[nodeId] && distances[nodeId]< minDistance) {
+                    minDistanceNodeId=nodeId;
+                    minDistance=distances[nodeId];
                 }
             }
-            finished[minDistanceIdx] = true;
-            lastFinishedIdx = minDistanceIdx;
+            finished[minDistanceNodeId]=true;
+            lastFinishedNodeId=minDistanceNodeId;
             finishedCnt++;
         }
-        int answer = 0;
         
-        for (int i=0; i<N; i++) {
-            if (distances[i] <= K) {
+        int answer = 0;
+        for (int i=0; i<n; i++) {
+            // System.out.printf("%d(%d) ", i, distances[i]);
+            if (distances[i] <= k) {
                 answer++;
             }
         }
         return answer;
     }
-    
     int add(int a, int b) {
         long l = (long) a + b;
-        return (l > Integer.MAX_VALUE) ? Integer.MAX_VALUE : (int) l;
+        return (l >= Integer.MAX_VALUE) ? Integer.MAX_VALUE : (int) l;
     }
 }
