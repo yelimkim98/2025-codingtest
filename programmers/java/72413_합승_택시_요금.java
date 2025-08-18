@@ -1,47 +1,50 @@
 class Solution {
-    public int solution(int n, int s, int a, int b, int[][] fares) {
-        // 모든 점의 id를 1 줄여서 쓰자.
-        int[][] arr = new int[n][n];
+    public int solution(int n, int start, int a, int b, int[][] fares) {
+        int[][] distances = new int[n][n];
+        start=start-1;
+        a=a-1;
+        b=b-1;
         for (int i=0; i<n; i++) {
             for (int j=0; j<n; j++) {
-                if (i==j) arr[i][j] = 0;
-                else arr[i][j] = Integer.MAX_VALUE;
+                distances[i][j] = Integer.MAX_VALUE;
             }
         }
-        for (int i=0; i<fares.length; i++) {
-            int p1 = fares[i][0]-1;
-            int p2 = fares[i][1]-1;
-            int cost = fares[i][2];
-            arr[p1][p2] = cost;
-            arr[p2][p1] = cost;
+        for (int i=0; i<n; i++) {
+            distances[i][i] = 0;
         }
-        for (int mid=0; mid<n; mid++) {
-            for (int start=0; start<n; start++) {
-                for (int end=0; end<n; end++) {
-                    int originalCost = arr[start][end];
-                    int newCost = add(arr[start][mid], arr[mid][end]);
-                    arr[start][end] = Math.min(originalCost, newCost);
+        for (int[] fare : fares) {
+            int n1=fare[0]-1;
+            int n2=fare[1]-1;
+            distances[n1][n2]=fare[2];
+            distances[n2][n1]=fare[2];
+        }
+        for (int i=0; i<n; i++) {
+            // s->t 갈때 i를 거쳐가는 경우 vs 안거치는 경우
+            for (int s=0; s<n; s++) {
+                for (int t=s+1; t<n; t++) {
+                    int newDistance = add(distances[s][i], distances[i][t]);
+                    distances[s][t] = Math.min(distances[s][t], newDistance);
+                    distances[t][s] = Math.min(distances[s][t], newDistance);
                 }
             }
         }
-        // 임의의 노드 i에 대하여 i까지 같이 탈 경우 비용 계산하여 최솟값 마련
         int answer = Integer.MAX_VALUE;
         
         for (int i=0; i<n; i++) {
-            int togetherCost = arr[s-1][i];
-            int aSoloCost = arr[i][a-1];
-            int bSoloCost = arr[i][b-1];
-            answer = Math.min(answer, add(togetherCost, aSoloCost, bSoloCost));
+            // i까지 택시를 함께 타고감
+            int newFare = add(distances[start][i], distances[i][a], distances[i][b]);
+            answer = Math.min(answer, newFare);
         }
         return answer;
     }
     
     int add(int a, int b) {
-        if (a==Integer.MAX_VALUE || b==Integer.MAX_VALUE) return Integer.MAX_VALUE;
-        return a+b;
+        long l = (long) a + b;
+        return (l>=Integer.MAX_VALUE) ? Integer.MAX_VALUE : (int)l;
     }
+    
     int add(int a, int b, int c) {
-        if (a==Integer.MAX_VALUE || b==Integer.MAX_VALUE || c==Integer.MAX_VALUE) return Integer.MAX_VALUE;
-        return a+b+c;
+        long l = (long) a + b + c;
+        return (l>=Integer.MAX_VALUE) ? Integer.MAX_VALUE : (int)l;
     }
 }
