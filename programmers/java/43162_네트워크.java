@@ -1,55 +1,43 @@
 import java.util.*;
+
 class Solution {
-    
+    int[] arr;
     public int solution(int n, int[][] computers) {
-        int[] unionFind = new int[n];
+        arr=new int[n];
         for (int i=0; i<n; i++) {
-            unionFind[i] = i;
+            arr[i]=i;
         }
         
-        for (int i=0; i<n-1; i++) {
+        for (int i=0; i<n; i++) {
             for (int j=i+1; j<n; j++) {
                 if (computers[i][j] == 1) {
-                    int minRoot;
-                    int maxRoot;
-                    
-                    if (unionFind[i] < unionFind[j]) {
-                        minRoot = unionFind[i];
-                        maxRoot = unionFind[j];
-                    } else {
-                        minRoot = unionFind[j];
-                        maxRoot = unionFind[i];
-                    }
-                    unionFind[i] = minRoot;
-                    unionFind[j] = minRoot;
-                    for (int k=0; k<n; k++) {
-                        if (unionFind[k] == maxRoot) {
-                            unionFind[k] = minRoot;
-                        }
-                    }
+                    union(i, j);
                 }
             }
         }
         
-        Set<Integer> before = new HashSet<>();
+        Set<Integer> roots = new HashSet<>();
         for (int i=0; i<n; i++) {
-            System.out.print(unionFind[i] + " ");
-            before.add(unionFind[i]);
+            roots.add(find(arr[i]));
         }
-        return before.size();
+        return roots.size();
+    }
+    // union : 두 집합의 루트 노드를 연결 (숫자 큰쪽 -> 작은쪽 방향으로)
+    void union(int n1, int n2) {
+        int n1Root = find(n1);
+        int n2Root = find(n2);
+        if (n1Root != n2Root) {
+            int root = Math.min(n1Root, n2Root);
+            arr[n1Root]=root;
+            arr[n2Root]=root;
+        }
+    }
+    
+    // find : 어떤 점의 루트 노드를 발견 (만약 최종 루트로 되어있지 않으면 최종 루트로 업데이트까지)
+    int find(int n) {
+        if (arr[n] == n) return n;
+        int rootNode = find(arr[n]);
+        arr[n] = rootNode;
+        return rootNode;
     }
 }
-/*
-    0 1 2
-0 [ 1 1 0 ]
-1 [ 1 1 1 ]
-2 [ 0 1 1 ]
-
-[1,0,0,1,0,0]
-[0,1,1,0,0,0]
-[0,1,1,0,1,0]
-[1,0,0,1,0,1]
-[0,0,1,0,1,1]
-[0,0,0,1,1,1]
-
-*/
