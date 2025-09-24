@@ -86,3 +86,12 @@ public int hashCode() {
     - 목적 : 모든 정점 쌍 간의 최단 경로를 구함
 - 크루스컬
   - 목적 : 그래프의 모든 정점을 포함하면서 사이클이 없고, 가장 적은 간선으로 연결한 트리(신장 트리) 중 전체 간선 가중치의 합이 최소인 트리(최소 신장 트리)를 찾는 알고리즘
+
+# 이진탐색
+- Collections.binarySearch(arrayList, targetValue)
+  - arrayList는 오름차순 정렬되어있어야 함
+  - targetValue가 존재하는 경우 해당 index return
+    - 같은 값이 2개 이상 존재하면, 그 중 랜덤 index return (이진탐색을 통해 맨 처음 발견된 값 위치)
+  - targetValue가 존재하지 않는 경우
+    targetValue가 들어가야할 자리(index)를 음수화해서 return 함.
+    그런데 index가 0이면 -1 곱해도 0이므로 문제됨 -> 인덱스에 +1 해준다음 음수화해서 return 함
